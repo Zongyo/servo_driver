@@ -13,7 +13,7 @@ void spi_initial(void){
 	REGFPT(&PORTB,0x30,4,3);		//CS1,CS2(high)
 	REGFPT(&DDRB,0x30,4,3);			//CS1,CS2(out)
 	REGFPT(&SPSR, 0x01, 0,1);		//雙倍頻率 1:en 0:un
-	REGFPT(&SPCR, 0x03, 0,1);		//除頻 0:4 1:16 2:64 3:128
+	REGFPT(&SPCR, 0x03, 0,0);		//除頻 0:4 1:16 2:64 3:128
 	REGFPT(&SPCR, 0x04, 2,1);		//CLK相位
 	REGFPT(&SPCR, 0x08, 3,0);		//CLK極性
 	REGFPT(&SPCR, 0x10, 4,1);		//0:slave 1:master
@@ -51,7 +51,7 @@ void pwm_1_initial(void){
 
 void IO_initial(void){
 		PORTD=0;
-		DDRD =DDRD | (1 << PIND7) |(1 << PIND6) | (1 << PIND5);
+		DDRD =DDRD | (1 << PIND7) |(1 << PIND6) | (1 << PIND5) | (1 << PIND4);
 }
 
 void hardware_init(void){

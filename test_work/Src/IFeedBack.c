@@ -6,33 +6,37 @@ IFeedBack.c
 #define TO_COMPILE_LIB_C
 /*HW Interrupt Sharer Timer0*/
 #include "../Inc/IFeedBack.h"
-#define I_STATURATE ((MAX_CURRENT * Curr_K_I)>>Curr_K_I_EXPON)
+#define I_STATURATE ((MAX_CURRENT * Curr_K_I)<<Curr_K_I_EXPON)
 IFeedBackStr_t IFeedBack_str = {
 	.MaxCurr = MAX_CURRENT ,
 	.MinCurr = MIN_CURRENT ,
 	.CurrKp = Curr_K_P ,
 	.CurrKi = Curr_K_I ,
 	.CurrKp_Expon = Curr_K_P_EXPON ,
-	.CurrKi_Expon = Curr_K_I_EXPON
+	.CurrKi_Expon = Curr_K_I_EXPON ,
+	.staturate = (MAX_CURRENT<<Curr_K_I_EXPON)/Curr_K_I,
+	.lamda = LAMDA
 };
 
 void IFeedBack_lay(IFeedBackStr_t* Str_p) {
 	Str_p->CurrentOut_p = &Str_p->CurrentOut;
 }
-//¨S¦³²Ö¿n»~®tªºÅÜ¼Æ
-//DIFF ¬°null
+//ï¿½Sï¿½ï¿½ï¿½Ö¿nï¿½~ï¿½tï¿½ï¿½ï¿½Ü¼ï¿½
+//DIFF ï¿½ï¿½null
 uint8_t IFeedBack_step(void* void_p) {
 
 	IFeedBackStr_t* Str_p = (IFeedBackStr_t*)void_p;
 	uint16_t Current;
 	Str_p->DiffCountAcc += *Str_p->DiffCountIn_p;
-	if (Str_p->DiffCountAcc > I_STATURATE )
-		Str_p->DiffCountAcc = I_STATURATE;
-	else if (Str_p->DiffCountAcc < -I_STATURATE)
-		Str_p->DiffCountAcc = -I_STATURATE;
+
+	if (Str_p->DiffCountAcc > Str_p->staturate )
+		Str_p->DiffCountAcc = Str_p->staturate;
+	else if (Str_p->DiffCountAcc < -Str_p->staturate)
+		Str_p->DiffCountAcc = -Str_p->staturate;
 	
+	Str_p->DiffCountAcc = Str_p->DiffCountAcc*Str_p->lamda;
 	Current = abs(((Str_p->CurrKi * Str_p->DiffCountAcc) +
-		Str_p->CurrKp * (*Str_p->DiffCountIn_p)) >> Str_p->CurrKi_Expon);//F16.0 <= F8.0*F16.0+F8.0*F8.0
+		Str_p->CurrKp * (*Str_p->DiffCountIn_p)) >> Str_p->CurrKi_Expon);
 	if (Current > Str_p->MaxCurr)
 		Current = Str_p->MaxCurr;
 	else if (Current < Str_p->MinCurr)

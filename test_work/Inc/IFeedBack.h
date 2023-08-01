@@ -10,40 +10,40 @@ IFeedBack.c
 typedef struct IFeedBack {
     uint16_t MaxCurr;   //F16.0 maximun current
     uint16_t MinCurr;   //F16.0 minimun current
-    uint8_t CurrKi;     //F0.9 K_i coeficient
+    uint16_t CurrKi;     //F0.9 K_i coeficient
     uint8_t CurrKi_Expon; //F8.0 K_i coeficient exponent 
-    uint8_t CurrKp;     //F0.9 K_p coeficient
+    uint16_t CurrKp;     //F0.9 K_p coeficient
     uint8_t CurrKp_Expon; //F8.0 K_p coeficient exponent 
     uint16_t CurrentOut; //F16  Current output
     //output pointers  
     volatile uint16_t* CurrentOut_p;//F16  address of Current output 
     //input pointers
-    int16_t DiffCountAcc; //F16.0 address of one cycle encoder count
+    int32_t DiffCountAcc; //F16.0 address of one cycle encoder count
+	int32_t staturate;
+	float lamda;
     volatile int16_t* DiffCountIn_p; //F16.0 address of Cmd Sense Count Difference
 }IFeedBackStr_t;
 
 /* Current FeedbackControled */
 
-//³Ì¤j­È¬°1024¡A¦ýmosfet¿é¥X¤£¤F¡A­Y±j¨î¿é¥X·|¬µ¹q¸ô
+//ï¿½Ì¤jï¿½È¬ï¿½1024ï¿½Aï¿½ï¿½mosfetï¿½ï¿½Xï¿½ï¿½ï¿½Fï¿½Aï¿½Yï¿½jï¿½ï¿½ï¿½Xï¿½|ï¿½ï¿½ï¿½qï¿½ï¿½
 // Maximun Current uint16_t F16.0
-#define MAX_CURRENT 200
+#define MAX_CURRENT 196UL
+
 // Minimun Current uint16_t F10.6,  MIN_Current=MAX_Current/8
-#define MIN_CURRENT 16
+// min = 40
+// speed min = 110
+#define MIN_CURRENT 40
 #define Curr_EXPON 0
 
-// At Satulate the  Error Count_sat is 8 count (error more than 8 count the feedback is saturated)
-// I_max= K_p * Count_sat => K_p= 1024/8= 128
-// Current K_p uint8_t F8.0 0~255
-#define Curr_K_P 127
-#define Curr_K_P_EXPON 4
+// Curr_K_P_EXPON : gain 2^Curr_K_P_EXPON
+#define Curr_K_P 512
+#define Curr_K_P_EXPON 10
 
-// lambda=0.95 steady state error count=4
-// count_acc=lambd * count_acc +error => count_acc = error/(1-lambda)
-// steady state error integer count_acc= 4/(1-0.95)=80
-// I_max= K_i * Count_acc => K_p= 1024/80= 12.8
-// Current K_I 0~255 F4.4=F8.0>>4 
-#define Curr_K_I 64
-#define Curr_K_I_EXPON 4
+// Curr_K_I_EXPON : gain 2^Curr_K_I_EXPON
+#define Curr_K_I 32
+#define Curr_K_I_EXPON 10
+#define LAMDA (0.96)
 
 void IFeedBack_lay(IFeedBackStr_t* Str_p);
 uint8_t IFeedBack_step(void* void_p);

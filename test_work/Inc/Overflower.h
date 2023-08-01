@@ -28,6 +28,7 @@ typedef struct Overflower {
     int16_t Count0;  //F16 old count of encoder
     uint32_t AccuOut; //F32 accumulated multiturn count of encoder
     /*Input pointer*/
+	int16_t diffcount;
     volatile uint16_t* CountIn_p; //F16 address of newly readed count of encder
     //output pointers  
     volatile uint32_t* AccuOut_p;  //F32 address of accumulated multiturn count of encoder 

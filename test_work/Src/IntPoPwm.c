@@ -33,30 +33,30 @@ void IntPoPwm_lay(IntPoPwmStr_t* Str_p, uint16_t* PwmOut_p, int16_t* Table_p, ui
 }
 
 /*
-*1°é¨B¶i°¨¹F¹q¤l¨¤¬° 4*2^13
-*1°é¾÷±ñ¨¤¬° 50*2^15
-*³æ¦ìÂà´«:(50*2^15)/2^14 = 100
+*1ï¿½ï¿½Bï¿½iï¿½ï¿½ï¿½Fï¿½qï¿½lï¿½ï¿½ï¿½ï¿½ 4*2^13
+*1ï¿½ï¿½ï¿½ï¿½ñ¨¤¬ï¿½ 50*2^15
+*ï¿½ï¿½ï¿½ï¿½à´«:(50*2^15)/2^14 = 100
 *
-*1°é¥~Âà¤l°¨¹F¹q¤l¨¤¬° 6*2^13
-*1°é¾÷±ñ¨¤¬° 7*6*2^13
-*³æ¦ìÂà´«:(7*6*2^13)/2^14 = 21
+*1ï¿½ï¿½~ï¿½ï¿½lï¿½ï¿½ï¿½Fï¿½qï¿½lï¿½ï¿½ï¿½ï¿½ 6*2^13
+*1ï¿½ï¿½ï¿½ï¿½ñ¨¤¬ï¿½ 7*6*2^13
+*ï¿½ï¿½ï¿½ï¿½à´«:(7*6*2^13)/2^14 = 21
 */
-//¹ê»Ú¬°9459 ¦ý©wÂI¼ÆºâÃz¤F
+//ï¿½ï¿½Ú¬ï¿½9459 ï¿½ï¿½ï¿½wï¿½Iï¿½Æºï¿½ï¿½zï¿½F
 #define TOTAL_TIME 9490
 
 uint8_t IntPoPwm_step(void* void_p) {
 	IntPoPwmStr_t* Str_p = (IntPoPwmStr_t*)void_p;
 	int32_t Au, Resi;/*F3.13 maximun 8 for 6 step or 4 step per electic cycle */
-	int32_t Wtau0, Wtau1, zreo_vector, Temp;
+	int32_t Wtau0, Wtau1, zero_vector, Temp;
 	uint8_t Phase0, Phase1;
-
+	
 	//Au = ((((uint32_t)*Str_p->CountIn_p - Str_p->Alpha) * 21) % (Str_p->Chann << 14));
 	Au = (((uint32_t)*Str_p->CountIn_p * (uint32_t)21) % ((uint32_t)Str_p->Chann << 14));
 	Phase0 = Au >> 13;//Get the MSB 3bits as its phase
 	Phase1 = Phase0 + 1;
 	if (Phase1 == Str_p->Chann * 2)
 		Phase1 = 0;
-	// resi  ¹q¤l¨¤©M²Ä´X¶H­­ªº®t­È(¤p¼Æ)¡A±o¨ìªºµ²ªG¬O»Px¶bªº§¨¨¤
+	// resi  ï¿½qï¿½lï¿½ï¿½ï¿½Mï¿½Ä´Xï¿½Hï¿½ï¿½ï¿½ï¿½ï¿½tï¿½ï¿½(ï¿½pï¿½ï¿½)ï¿½Aï¿½oï¿½ìªºï¿½ï¿½ï¿½Gï¿½Oï¿½Pxï¿½bï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	Resi = Au - ((uint16_t)Phase0 << 13);
 	
 	Temp = ((Resi*(Resi- FULL_SECTOR))>>16)*(Str_p->MdWt) >> 8;
@@ -73,11 +73,11 @@ uint8_t IntPoPwm_step(void* void_p) {
 	int real = lagrange_polynomial(0, w_2, w_3,0,5792,8192, expon);
 	uint16_t duty[2] = {0};
 	*/
-	//max period = 8192 * 2 /sqrt(3)¡A¦b30«×®É¥Î¬Û¥æÂI¬Û¥[¥i¥H´ú¥X¨Ó
+	//max period = 8192 * 2 /sqrt(3)ï¿½Aï¿½b30ï¿½×®É¥Î¬Û¥ï¿½ï¿½Iï¿½Û¥[ï¿½iï¿½Hï¿½ï¿½ï¿½Xï¿½ï¿½
 	int32_t Used_time = Wtau0 + Wtau1;
 
-	zreo_vector = (TOTAL_TIME - (Used_time*(*Str_p->CurrentIn_p)>>10))>>1;
-	//>>10 ¬O¦]¬°pwm ICR ¬O 1024
+	zero_vector = (TOTAL_TIME - (Used_time*(*Str_p->CurrentIn_p)>>10))>>1;
+
 	for (uint8_t ch = 0; ch < Str_p->Chann; ch++) {
 		Str_p->PwmOut_p[ch] = ((*Str_p->CurrentIn_p) * 
 			((((uint32_t)Str_p->Table_p[Phase0 * 3 + ch] * Wtau0)>>13) + 

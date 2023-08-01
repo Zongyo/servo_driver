@@ -4,7 +4,7 @@
 #define JERK_EXPON 10
 #define ACCEL_LIMIT  10
 #define ACCEL_EXPON  10
-#define VELO_LIMIT 200
+#define VELO_LIMIT 400
 #define VELO_EXPON 10
 #define POSI_LIMIT 1024
 

@@ -27,6 +27,7 @@ typedef struct IntPoPwm {
 	uint8_t OmegaExp; //F8.0 Omega Exponent 
 	uint8_t Alpha; //F4.4 maximun 16
 	int16_t MdWt;     //F2.14 middle component 
+	uint16_t pre_angle;
 	/* input pointer*/
 	volatile uint16_t* CurrentIn_p;//F1.15
 	volatile uint16_t* CountIn_p; //F14.2 address of Single cycle encoder count 

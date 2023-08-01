@@ -10,7 +10,7 @@
 #include <avr/io.h>
 
 #ifndef DEFAULTUARTBAUD
-#define DEFAULTUARTBAUD 38400
+#define DEFAULTUARTBAUD 691200
 #endif
 
 /**

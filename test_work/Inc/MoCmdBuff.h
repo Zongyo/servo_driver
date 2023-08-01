@@ -54,6 +54,7 @@ void MoCmdBuff_lay(MoCmdBuffStr_t* Str_p,uint16_t init_angle , uint8_t* NextTask
 uint8_t MoCmdBuffSync_step(void* void_p);
 uint8_t MoCmdBuffExec_step(void* void_p);
 uint8_t MoCmdBuffUpda_step(void* void_p);
+uint8_t MoCmdBuffExec_step_2(void* void_p);
 
 extern uint8_t MoCmd_NextTask_p[];
 extern MoCmdBuffStr_t MoCmdBuff_str;

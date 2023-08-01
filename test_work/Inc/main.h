@@ -65,7 +65,7 @@ static inline uint16_t get_ADC(uint8_t pin){
 	uint8_t ct=0,j=1;
 	static uint8_t last_pin = 0;
 	if (last_pin != pin){
-		j=3;
+		j=4;
 	}
 	for (int i=0;i<j;i++)
 	{

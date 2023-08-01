@@ -11,18 +11,23 @@ MoCmdBuff.c
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+
 #define sgn(x) (((x) < (0)) ? (-1):(1))
 #define min(a,b) ((a)>(b)? (b):(a))
 
 
 #define HALF_CYCLE 8192
 #define FULL_CYCLE 16384
+#define MASK	16383
 
 void MoCmdBuff_lay(MoCmdBuffStr_t* Str_p, uint16_t initial_angle ,uint8_t* NextTask_p) {
 	Str_p->NextTask_p = NextTask_p;
 	Str_p->PosiGoad_p = &Str_p->PosiGoad;
 	Str_p->error_out_p = &Str_p->error_out;
 	Str_p->PosiGoad = initial_angle;
+	Str_p->PosiCmd =initial_angle;
+	Str_p->PosiMore = 0;
+	Str_p->ViloCmd  = 0;
 }
 
 //position control under asinged velocity limit move to the assigned position
@@ -159,5 +164,45 @@ uint8_t MoCmdBuffExec_step(void* void_p) {
 		Str_p->error_out -= FULL_CYCLE;
 	else if (Str_p->error_out < -HALF_CYCLE)
 		Str_p->error_out += FULL_CYCLE;
+	return 0;
+}
+
+
+
+uint8_t MoCmdBuffExec_step_2(void* void_p) {
+	MoCmdBuffStr_t* Str_p= (MoCmdBuffStr_t*) void_p;
+	int16_t Vilo,Vilom;
+	Str_p->ViloBasic = 0;
+	
+	Str_p->PosiMore += Str_p->ViloCmd;
+	Str_p->PosiCmd  += Str_p->PosiMore;
+	Str_p->PosiMore = 0;
+	
+	Str_p->PosiCmd = Str_p->PosiCmd & MASK ;
+	
+	
+	Str_p->Posi2Adj = (int16_t)Str_p->PosiCmd - (int16_t)Str_p->PosiGoad;
+	if (Str_p->Posi2Adj > HALF_CYCLE)
+	Str_p->Posi2Adj -= FULL_CYCLE;
+	else if (Str_p->Posi2Adj < -HALF_CYCLE)
+	Str_p->Posi2Adj += FULL_CYCLE;
+	
+	Vilo = Str_p->Posi2Adj;								//Vilo include the basic Vilo and more for adjust position
+	Vilom=min(Str_p->ViloLmt, abs(Vilo)) * sgn(Vilo);	//Vilo can not exceed limitation
+	Str_p->Posi2Adj=Str_p->Posi2Adj-Vilom;				//Posi to Adjust subtract the amount executed
+	Str_p->PosiGoad= Str_p->PosiGoad+Vilom;				//Accumu vilo to get position
+	Str_p->PosiGoad= Str_p->PosiGoad & MASK;
+	
+	if (abs((int16_t)Str_p->PosiCmd - (int16_t)Str_p->PosiGoad) < VELO_LIMIT)
+	{
+		Str_p->PosiGoad = Str_p->PosiCmd;
+	}
+
+	Str_p->error_out = Str_p->PosiGoad - *Str_p->PosiSensIn_p;
+	if (Str_p->error_out > HALF_CYCLE)
+	Str_p->error_out -= FULL_CYCLE;
+	else if (Str_p->error_out < -HALF_CYCLE)
+	Str_p->error_out += FULL_CYCLE;
+
 	return 0;
 }

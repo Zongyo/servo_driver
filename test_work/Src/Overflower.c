@@ -22,21 +22,22 @@ void Overflower_lay(OverflowerStr_t* Str_p, uint8_t* NextTask_p)
     Str_p->HalfScale = HALF_SCALE;
     Str_p->AccuOut = 0x80000000 + HALF_SCALE;
     Str_p->Count0 = HALF_SCALE;
+	Str_p->diffcount =0;
 }
 
 uint8_t Overflower_step(void* void_p) {
     OverflowerStr_t* Str_p = (OverflowerStr_t*)void_p;
-    int16_t DiffCount, Count;
+    int16_t Count;
     Count = (*Str_p->CountIn_p);
 
-    DiffCount = Count - (int16_t)Str_p->Count0;
+    Str_p->diffcount = Count - (int16_t)Str_p->Count0;
 
     Str_p->Count0 = Count;
 
-    Str_p->AccuOut +=DiffCount;
-    if (DiffCount > Str_p->HalfScale)
+    Str_p->AccuOut +=Str_p->diffcount;
+    if (Str_p->diffcount > Str_p->HalfScale)
         Str_p->AccuOut -= Str_p->FullScale;
-    if (DiffCount < -Str_p->HalfScale)
+    if (Str_p->diffcount < -Str_p->HalfScale)
         Str_p->AccuOut += Str_p->FullScale;
     
     return 0;
