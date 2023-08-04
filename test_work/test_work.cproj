@@ -227,6 +227,9 @@
     <Compile Include="Src\RWFirFilter.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Src\sine_test.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Src\SinTable.c">
       <SubType>compile</SubType>
     </Compile>

@@ -50,6 +50,7 @@ C_SRCS +=  \
 ../Src/MoCmdBuff.c \
 ../Src/Overflower.c \
 ../Src/RWFirFilter.c \
+../Src/sine_test.c \
 ../Src/SinTable.c \
 ../Src/uartdevice.c
 
@@ -71,6 +72,7 @@ Src/main.o \
 Src/MoCmdBuff.o \
 Src/Overflower.o \
 Src/RWFirFilter.o \
+Src/sine_test.o \
 Src/SinTable.o \
 Src/uartdevice.o
 
@@ -85,6 +87,7 @@ Src/main.o \
 Src/MoCmdBuff.o \
 Src/Overflower.o \
 Src/RWFirFilter.o \
+Src/sine_test.o \
 Src/SinTable.o \
 Src/uartdevice.o
 
@@ -99,6 +102,7 @@ Src/main.d \
 Src/MoCmdBuff.d \
 Src/Overflower.d \
 Src/RWFirFilter.d \
+Src/sine_test.d \
 Src/SinTable.d \
 Src/uartdevice.d
 
@@ -113,6 +117,7 @@ Src/main.d \
 Src/MoCmdBuff.d \
 Src/Overflower.d \
 Src/RWFirFilter.d \
+Src/sine_test.d \
 Src/SinTable.d \
 Src/uartdevice.d
 
@@ -195,6 +200,13 @@ Src/Overflower.o: ../Src/Overflower.c
 	
 
 Src/RWFirFilter.o: ../Src/RWFirFilter.c
+	@echo Building file: $<
+	@echo Invoking: AVR/GNU C Compiler : 5.4.0
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG -DF_CPU=11059200UL  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\include"  -Og -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -mrelax -g2 -Wall -mmcu=atmega128 -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\gcc\dev\atmega128" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
+Src/sine_test.o: ../Src/sine_test.c
 	@echo Building file: $<
 	@echo Invoking: AVR/GNU C Compiler : 5.4.0
 	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG -DF_CPU=11059200UL  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\include"  -Og -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -mrelax -g2 -Wall -mmcu=atmega128 -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\gcc\dev\atmega128" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 

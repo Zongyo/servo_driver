@@ -22,6 +22,8 @@ Src\Overflower.c
 
 Src\RWFirFilter.c
 
+Src\sine_test.c
+
 Src\SinTable.c
 
 Src\uartdevice.c
